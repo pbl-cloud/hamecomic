@@ -8,5 +8,6 @@ Installation
 -
 
 $ cd hamecomic/pkg
+
 $ gem install -l hamecomic-0.1.0.gem
 
