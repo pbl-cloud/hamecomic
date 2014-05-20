@@ -11,3 +11,10 @@ $ cd hamecomic/pkg
 
 $ gem install -l hamecomic-0.1.0.gem
 
+
+Usage
+-
+
+$ hamecomic [mode] [input_file]
+
+[mode] : Choose from { kansha, mada, keikaku}.
