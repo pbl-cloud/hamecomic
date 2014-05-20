@@ -1,0 +1,210 @@
+# require "hamecomic/version"
+require "rubygems"
+require 'fileutils'
+require "opencv"
+include OpenCV
+
+# how to use
+# $ ruby hamecomic.rb <mode> <input_file>
+# modeは'mada', 'kansha', 'keikaku'の3種類
+
+
+# inputの文字列から作成するディレクトリ名を求める
+def directory_name(input)
+	directory =  input.rpartition(".")[-3]
+	return directory
+end
+
+# 写真から顔の矩形を検出し,output_dirに書き出す
+def face_detect(filename, output_dir, fullpath)
+
+	detector = CvHaarClassifierCascade::load(fullpath + "/../lib/data/haarcascades/haarcascade_frontalface_alt.xml")
+	image = IplImage.load(filename)
+	faces = detector.detect_objects(image)
+
+	# 顔を検出して出力。
+	i = 0
+	faces = nil
+	detector.detect_objects(image).each do |rect|
+		# image.rectangle!(rect.top_left, rect.bottom_right)
+		image_rect = image.sub_rect(rect)
+
+
+		# output_dirに検出した顔画像ファイルを保存
+		image_rect.save(output_dir + "/face_" + (i+=1).to_s + ".png")
+	end
+
+	return i
+end
+
+def manga(image)
+	gray = image.BGR2GRAY
+	manga = gray.adaptive_threshold(255, :block_size => 9)
+	manga = manga.GRAY2BGR
+	return manga
+end
+
+# 以下3つのメソッドは全てネタ画像を生成するもの
+def neta_frame_keikaku(filename, output_dir, fullpath)
+	face = IplImage.load(filename)
+	keikaku = IplImage.load(fullpath + "/../lib/data/keikaku.png")
+	mask = IplImage.load(fullpath + "/../lib/data/keikaku_mask.png", CV_LOAD_IMAGE_GRAYSCALE)
+
+
+	# rect座標の左上，右下を指定
+	top_left = CvPoint.new(85, 147)
+	bottom_right = CvPoint.new(266, 323)
+
+	# rectのサイズを計算
+	w = bottom_right.x - top_left.x
+	h = bottom_right.y - top_left.y
+	rect_size = CvSize.new(w, h)
+
+	# rectを定義
+	rect = CvRect.new(top_left.x, top_left.y, rect_size.width, rect_size.height)
+
+	# 顔画像をrectサイズに合わせる
+	face_resize = face.resize(rect_size)
+
+	# 顔画像を漫画風にする
+	face_resize = manga(face_resize)
+
+	# ネタ画像とマスク画像のrectを作って，そこに顔画像を貼る
+	keikaku_rect = keikaku.set_roi(rect)
+	mask_rect = mask.sub_rect(rect)
+	keikaku_rect = face_resize.copy(keikaku_rect, mask_rect)
+
+
+	# rectを元に戻してやる
+	out = keikaku_rect.reset_roi
+
+	# 出力
+	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_keikaku." + filename.rpartition("/")[-1].rpartition(".")[-1] 
+	puts "output file: #{output_name}"
+	out.save(output_name)
+end
+
+def neta_frame_kansha(filename, output_dir, fullpath)
+	face = IplImage.load(filename)
+	kansha = IplImage.load(fullpath + "/../lib/data/kansha.png")
+	mask = IplImage.load(fullpath + "/../lib/data/kansha_mask.png", CV_LOAD_IMAGE_GRAYSCALE)
+
+
+	# rect座標の左上，右下を指定
+	top_left = CvPoint.new(230, 198)
+	bottom_right = CvPoint.new(406, 384)
+
+	# rectのサイズを計算
+	w = bottom_right.x - top_left.x
+	h = bottom_right.y - top_left.y
+	rect_size = CvSize.new(w, h)
+
+	# rectを定義
+	rect = CvRect.new(top_left.x, top_left.y, rect_size.width, rect_size.height)
+
+	# 顔画像をrectサイズに合わせる
+	face_resize = face.resize(rect_size)
+
+	# 顔画像を漫画風にする
+	face_resize = manga(face_resize)
+
+	# ネタ画像とマスク画像のrectを作って，そこに顔画像を貼る
+	kansha_rect = kansha.set_roi(rect)
+	mask_rect = mask.sub_rect(rect)
+	kansha_rect = face_resize.copy(kansha_rect, mask_rect)
+
+
+	# rectを元に戻してやる
+	out = kansha_rect.reset_roi
+
+	# 出力
+	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_kansha." + filename.rpartition("/")[-1].rpartition(".")[-1] 
+	puts "output file: #{output_name}"
+	out.save(output_name)
+end
+
+def neta_frame_mada(filename, output_dir, fullpath)
+
+	face = IplImage.load(filename)
+	mada = IplImage.load(fullpath + "/../lib/data/mada.png")
+	mask = IplImage.load(fullpath + "/../lib/data/mada_mask.png", CV_LOAD_IMAGE_GRAYSCALE)
+
+
+	# rect座標の左上，右下を指定
+	top_left = CvPoint.new(257, 85)
+	bottom_right = CvPoint.new(436, 283)
+
+	# rectのサイズを計算
+	w = bottom_right.x - top_left.x
+	h = bottom_right.y - top_left.y
+	rect_size = CvSize.new(w, h)
+
+	# rectを定義
+	rect = CvRect.new(top_left.x, top_left.y, rect_size.width, rect_size.height)
+
+	# 顔画像をrectサイズに合わせる
+	face_resize = face.resize(rect_size)
+
+	# 顔画像を漫画風にする
+	face_resize = manga(face_resize)
+
+	# ネタ画像とマスク画像のrectを作って，そこに顔画像を貼る
+	mada_rect = mada.set_roi(rect)
+	mask_rect = mask.sub_rect(rect)
+	mada_rect = face_resize.copy(mada_rect, mask_rect)
+
+	# rectを元に戻してやる
+	out = mada_rect.reset_roi
+
+	# 出力
+	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_mada." + filename.rpartition("/")[-1].rpartition(".")[-1]
+	puts "output file: #{output_name}"
+	out.save(output_name)
+end
+
+
+##### Main #####
+
+mode = nil
+input = nil
+begin
+	mode = ARGV[0]
+	input = ARGV[1]
+	print 'mode: [', mode, ']   input: ',input, "\n"
+	fullpath = File.expand_path(File.dirname(__FILE__))
+
+	# 処理したファイルを出力するディレクトリを作る
+	output_dir =  directory_name(input)
+	FileUtils.mkdir_p output_dir
+
+
+	# 指定したファイルから顔を検出，出力
+	face_num = face_detect(input, output_dir, fullpath)
+
+rescue
+	puts "ERROR! #{mode} #{input}"
+	puts "Usage: hamecomic <mode> <input>"
+	puts "mode choices :{'mada', 'keikaku', 'kansha'}"
+	exit
+end
+
+
+# 各顔画像に対してネタ画像と合成
+for i in 1..face_num do
+	face_img = output_dir + "/face_" + i.to_s + ".png"
+
+	# modeによって処理を分ける
+	case mode
+	when 'mada'
+		neta_frame_mada(face_img, output_dir, fullpath)
+	when 'keikaku'
+		neta_frame_keikaku(face_img, output_dir, fullpath)
+	when 'kansha'
+		neta_frame_kansha(face_img, output_dir, fullpath)		
+	else
+		puts "\nERROR! \n"
+		puts "mode choices :{'mada', 'keikaku', 'kansha'}\n"
+		exit
+	end
+
+end
