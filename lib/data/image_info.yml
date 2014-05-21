@@ -1,0 +1,22 @@
+images:
+  keikaku:
+    filename: "keikaku.png"
+    mask_name: "keikaku_mask.png"
+    left: 85
+    top: 147
+    width: 181
+    height: 176
+  mada:
+    filename: "mada.png"
+    mask_name: "mada_mask.png"
+    left: 257
+    top: 85
+    width: 179
+    height: 198
+  kansha:
+    filename: "kansha.png"
+    mask_name: "kansha_mask.png"
+    left: 230
+    top: 198
+    width: 176
+    height: 186
