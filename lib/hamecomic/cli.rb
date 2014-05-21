@@ -12,6 +12,7 @@ module Hamecomic
     def self.start
       @opts.parse rescue print_usage_and_exit(1)
       print_usage_and_exit(1) unless IMAGES.has_key?(@opts[:mode].to_s)
+      Hamecomic.logger.level = ::Logger::DEBUG if @opts[:verbose]
       make_comic(@opts[:image], @opts[:mode], @opts.to_h)
     end
 

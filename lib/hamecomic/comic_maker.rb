@@ -23,7 +23,10 @@ module Hamecomic
       new_image = image.copy(new_image, @mask_rect)
 
       new_image.reset_roi
-      new_image.save(options[:output]) if options[:output]
+      if options[:output]
+        new_image.save(options[:output])
+        Hamecomic.logger.debug { "Saving to #{options[:output]}" }
+      end
       new_image
     end
 

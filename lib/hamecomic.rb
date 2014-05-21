@@ -1,6 +1,7 @@
 require "opencv"
 require "slop"
 require "yaml"
+require "logger"
 
 require "hamecomic/common"
 require "hamecomic/comic_maker"
@@ -17,6 +18,9 @@ module Hamecomic
 
   IMAGES = IMAGE_INFO['images']
 
+  @logger = Logger.new(STDOUT)
+  @logger.level = Logger::WARN
+
   # Returns an array of IplImage with faces in comics.
   # Mode can be any image which has a key in 'image_info.yml'.
   # Current modes are 'mada', 'keikaku' and 'kansha'.
@@ -26,13 +30,19 @@ module Hamecomic
   def make_comic(image, mode, options = {})
     raise ArgumentError, 'invalid mode' unless IMAGES.has_key?(mode.to_s)
     image = OpenCV::IplImage.load(image) unless image.is_a?(OpenCV::IplImage)
+    Hamecomic.logger.debug { "Starting faces detection." }
     faces = detect_faces(image)
+    Hamecomic.logger.debug { "Detected #{faces.count} faces." }
     return [] if faces.empty?
     comic_maker = ComicMaker.new(IMAGES[mode.to_s], options)
-    puts faces.count
     faces.each_with_index.map do |face, i|
       output = options[:output] % i if options[:output]
       comic_maker.apply_transformation(face, options.merge(output: output))
     end
+  end
+
+  private
+  def self.logger
+    @logger
   end
 end
