@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 # require "hamecomic/version"
 require "rubygems"
 require 'fileutils'
@@ -79,7 +81,7 @@ def neta_frame_keikaku(filename, output_dir, fullpath)
 	out = keikaku_rect.reset_roi
 
 	# 出力
-	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_keikaku." + filename.rpartition("/")[-1].rpartition(".")[-1] 
+	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_keikaku." + filename.rpartition("/")[-1].rpartition(".")[-1]
 	puts "output file: #{output_name}"
 	out.save(output_name)
 end
@@ -118,7 +120,7 @@ def neta_frame_kansha(filename, output_dir, fullpath)
 	out = kansha_rect.reset_roi
 
 	# 出力
-	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_kansha." + filename.rpartition("/")[-1].rpartition(".")[-1] 
+	output_name = output_dir + "/" + filename.rpartition("/")[-1].rpartition(".")[-3] + "_kansha." + filename.rpartition("/")[-1].rpartition(".")[-1]
 	puts "output file: #{output_name}"
 	out.save(output_name)
 end
@@ -200,7 +202,7 @@ for i in 1..face_num do
 	when 'keikaku'
 		neta_frame_keikaku(face_img, output_dir, fullpath)
 	when 'kansha'
-		neta_frame_kansha(face_img, output_dir, fullpath)		
+		neta_frame_kansha(face_img, output_dir, fullpath)
 	else
 		puts "\nERROR! \n"
 		puts "mode choices :{'mada', 'keikaku', 'kansha'}\n"
