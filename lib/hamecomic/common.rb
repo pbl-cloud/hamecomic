@@ -8,7 +8,7 @@ module Hamecomic
 
   # Returns an array of IPLImage with the faces detected in the input
   def detect_faces(image)
-    detector = OpenCV::CvHaarClassifierCascade::load(HAARCASCADE_CONFIG_PATH)
-    detector.detect_objects(image).map { |rect| image.sub_rect(rect) }
+    @detector ||= OpenCV::CvHaarClassifierCascade::load(HAARCASCADE_CONFIG_PATH)
+    @detector.detect_objects(image).map { |rect| image.sub_rect(rect) }
   end
 end
