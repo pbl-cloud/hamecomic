@@ -6,6 +6,7 @@ hamecomic
 
 Installation
 -
+$ git clone git@github.com:pbl-cloud/hamecomic.git
 
 $ cd hamecomic/pkg
 
