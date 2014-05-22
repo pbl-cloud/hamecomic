@@ -41,7 +41,6 @@ module Hamecomic
     end
   end
 
-  private
   def self.logger
     @logger
   end
