@@ -35,10 +35,12 @@ module Hamecomic
     Hamecomic.logger.debug { "Detected #{faces.count} faces." }
     return [] if faces.empty?
     comic_maker = ComicMaker.new(IMAGES[mode.to_s], options)
+    images = []
     faces.each_with_index.map do |face, i|
       output = options[:output] % i if options[:output]
-      comic_maker.apply_transformation(face, options.merge(output: output))
+      images << comic_maker.apply_transformation(face, options.merge(output: output))
     end
+    images
   end
 
   def self.logger
